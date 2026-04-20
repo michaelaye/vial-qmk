@@ -1,0 +1,28 @@
+name: Build Sweep Vial
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-sweep.yml'
+      - 'keyboards/ferris/sweep/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build firmware
+        run: make ferris/sweep:vial
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ferris_sweep_vial
+          path: '*.hex'
+          if-no-files-found: error
